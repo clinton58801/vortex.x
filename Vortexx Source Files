@@ -1,0 +1,102 @@
+// VORTEX.X – Main Files (modular breakdown)
+
+// 1. index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VORTEX.X – NeuroForge</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
+
+
+// 2. styles.css
+body {
+  background: #000011;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #0f0f33, #000011);
+}
+
+
+// 3. main.js
+import App from './App.js';
+import { createRoot } from 'react-dom/client';
+
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(App());
+
+
+// 4. App.js
+import { useState } from 'react';
+import Login from './Login.js';
+import Dashboard from './Dashboard.js';
+
+export default function App() {
+  const [user, setUser] = useState(null);
+  return user ? Dashboard({ user }) : Login({ onLogin: setUser });
+}
+
+
+// 5. Login.js
+export default function Login({ onLogin }) {
+  return (
+    <div>
+      <h1>Login to VORTEX.X</h1>
+      <button onClick={() => onLogin({ name: 'DemoUser', plan: 'Pro' })}>
+        Login as Demo
+      </button>
+    </div>
+  );
+}
+
+
+// 6. Dashboard.js
+export default function Dashboard({ user }) {
+  return (
+    <div>
+      <h2>Welcome, {user.name}</h2>
+      <p>Plan: {user.plan}</p>
+      <button onClick={() => alert('Launching Agent...')}>Run AI Agent</button>
+    </div>
+  );
+}
+
+
+// 7. agents/AgentCore.js
+export function runAgent(input) {
+  return `Processing: ${input}`;
+}
+
+
+// 8. server.js (Express backend for auth/payments)
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.post('/api/login', (req, res) => {
+  res.json({ user: { name: 'DemoUser', plan: 'Pro' } });
+});
+
+app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+
+
+// Add more modules (PDF, voice, chat history) on request
