@@ -1,8 +1,20 @@
 import { useState } from 'react';
 import Login from './Login.js';
+import Signup from './Signup.js';
 import Dashboard from './Dashboard.js';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  return user ? Dashboard({ user }) : Login({ onLogin: setUser });
+  const [showSignup, setShowSignup] = useState(false);
+
+  const handleLogout = () => {
+    setUser(null);
+    setShowSignup(false);
+  };
+
+  if (user) return Dashboard({ user, onLogout: handleLogout });
+
+  return showSignup
+    ? Signup({ onSignup: setUser })
+    : Login({ onLogin: setUser, switchToSignup: () => setShowSignup(true) });
 }
