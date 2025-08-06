@@ -1,0 +1,33 @@
+import formidable from 'formidable';
+import fs from 'fs';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const form = new formidable.IncomingForm();
+  form.uploadDir = './temp';
+  form.keepExtensions = true;
+
+  form.parse(req, async (err, fields, files) => {
+    if (err || !files.file) {
+      return res.status(400).json({ error: 'File upload failed' });
+    }
+
+    const uploadedFile = files.file[0];
+    const fileContent = fs.readFileSync(uploadedFile.filepath, 'utf-8');
+
+    // Fake AI summary logic
+    const wordCount = fileContent.split(/\s+/).length;
+    const result = `✅ File uploaded. Word count: ${wordCount}\n\n---\n\n${fileContent.slice(0, 500)}...`;
+
+    return res.status(200).json({ result });
+  });
+}
